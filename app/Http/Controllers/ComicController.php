@@ -15,6 +15,7 @@ class ComicController extends Controller
     public function index()
     {
         $comics = MyComic::all();
+        return view("comics.index", compact("comics"));
     }
 
     /**
@@ -24,7 +25,7 @@ class ComicController extends Controller
      */
     public function create()
     {
-        //
+        return view("comics.create");
     }
 
     /**
@@ -35,7 +36,14 @@ class ComicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $newComic = new MyComic();
+        $newComic->fill($data);
+        $newComic = MyComic::create($data);
+        $newComic->save();
+
+        return redirect()->route("comics.show", $newComic->id)
+      ->with("msg", "Fumetto salvato correttamente");
     }
 
     /**
@@ -46,7 +54,7 @@ class ComicController extends Controller
      */
     public function show($id)
     {
-        //
+        return view("comics.show", compact("comics"));
     }
 
     /**
@@ -57,7 +65,9 @@ class ComicController extends Controller
      */
     public function edit($id)
     {
-        //
+        $comics = MyComic::findOrFail($id);
+
+        return view("comics.edit", compact("comics"));
     }
 
     /**
@@ -80,6 +90,10 @@ class ComicController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $comics = MyComic::findOrFail($id);
+        $comics->delete();
+
+        return redirect()->route("comics.index")
+        ->with("msg", "Fumetto rimosso correttamente");
     }
 }
